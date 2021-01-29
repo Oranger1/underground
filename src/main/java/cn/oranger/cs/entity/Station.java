@@ -37,9 +37,10 @@ public class Station implements Serializable {
 
     private Integer lineId;
 
-    private Integer lastStationId;
-
-    private Integer nextStationId;
+    /**
+     * 第几站
+     */
+    private Integer stationNumber;
 
     @ApiModelProperty(value = "1启用，0禁用")
     private Integer status;

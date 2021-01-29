@@ -34,11 +34,7 @@ public class Line implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    private Integer firstStationId;
-
-    private Integer lastStationId;
-
-    private Integer stationNumber;
+    private Integer totalStation;
 
     @TableLogic
     private Integer deleted;

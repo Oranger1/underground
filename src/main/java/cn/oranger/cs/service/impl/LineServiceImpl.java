@@ -50,7 +50,7 @@ public class LineServiceImpl extends ServiceImpl<LineMapper, Line> implements Li
     }
 
     @Override
-    public Line getLine(Integer lineId) {
+    public Line getLineById(Integer lineId) {
         return this.getById(lineId);
     }
 

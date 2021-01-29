@@ -23,7 +23,7 @@ public interface LineService extends IService<Line> {
 
     public List<Line> queryLines(LineQueryVo queryVo);
 
-    public Line getLine(Integer lineId);
+    public Line getLineById(Integer lineId);
 
     public boolean addLine(Line line);
 

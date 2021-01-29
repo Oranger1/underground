@@ -2,6 +2,7 @@ package cn.oranger.cs.service;
 
 import cn.oranger.cs.entity.Manager;
 import cn.oranger.cs.entity.Station;
+import cn.oranger.cs.requestVo.AddStationRequest;
 import cn.oranger.cs.requestVo.ManagerQueryVo;
 import cn.oranger.cs.requestVo.StationQueryVo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -24,10 +25,12 @@ public interface StationService extends IService<Station> {
 
     public Station getStation(Integer stationId);
 
-    public boolean addStation(Station station);
+    public boolean addStation(AddStationRequest request);
 
     public boolean updateStation(Station station);
 
     public Integer removeById(Integer stationId);
+
+    public List<Station> queryStationsByLineId(Integer lineId);
 
 }

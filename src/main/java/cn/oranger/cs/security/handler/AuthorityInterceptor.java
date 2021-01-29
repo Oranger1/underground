@@ -1,13 +1,13 @@
 package cn.oranger.cs.security.handler;
 
 import cn.oranger.cs.entity.Manager;
+import cn.oranger.cs.security.MySessionContext;
 import cn.oranger.cs.security.TokenUtils;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -38,9 +38,14 @@ public class AuthorityInterceptor implements HandlerInterceptor {
             log.info("不拦截" + uri);
             return true;
         }
-        String token = request.getHeader("token");
-        Claims claims = TokenUtils.parseJWT(token);
         log.info("拦截" + uri);
+
+        String token = request.getHeader("authorization");
+        HttpSession localSession = MySessionContext.getSession(request.getSession().getId());
+        if(!localSession.getAttribute("token").equals(token)){
+            throw new RuntimeException("用户未登陆");
+        }
+        Claims claims = TokenUtils.parseJWT(token);
         if (claims.get("system",String.class)==null){
             throw new RuntimeException("用户未登陆");
         }

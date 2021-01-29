@@ -2,6 +2,7 @@ package cn.oranger.cs.controller;
 
 import cn.oranger.cs.entity.Manager;
 import cn.oranger.cs.requestVo.LoginRequsetVo;
+import cn.oranger.cs.security.MySessionContext;
 import cn.oranger.cs.security.TokenUtils;
 import cn.oranger.cs.service.ManagerService;
 import cn.oranger.cs.utils.JSONUtils;
@@ -9,6 +10,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * @author Oranger
@@ -26,8 +30,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    @ResponseBody
-    public String login(@RequestBody LoginRequsetVo loginRequsetVo){
+    public String login(@RequestBody LoginRequsetVo loginRequsetVo, HttpServletRequest request){
         Manager manager = managerService.lambdaQuery()
                 .eq(Manager::getUsername, loginRequsetVo.getUsername())
                 .eq(Manager::getPassword, loginRequsetVo.getPassword()).one();
@@ -36,6 +39,12 @@ public class LoginController {
             try {
                 String json = JSONUtils.toJSONString(manager);
                 token = TokenUtils.createJWT("oranger",manager.getUsername(), json);
+
+                //将token信息存放于session中。
+                HttpSession session = request.getSession();
+                session.setAttribute("token",token);
+                MySessionContext.addSession(session);
+
                 Claims claims = TokenUtils.parseJWT(token);
                 claims.getId();
                 Manager manager1 = JSONUtils.parse(claims.getSubject(), Manager.class);
