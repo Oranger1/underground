@@ -1,5 +1,5 @@
 server:
-  port: 5755
+  port: 5754
 spring:
   profiles:
     active: dev

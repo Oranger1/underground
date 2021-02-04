@@ -1,5 +1,6 @@
 package cn.oranger.cs.security.handler;
 
+import cn.hutool.core.convert.Convert;
 import cn.oranger.cs.entity.Manager;
 import cn.oranger.cs.security.MySessionContext;
 import cn.oranger.cs.security.TokenUtils;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,6 +35,12 @@ public class AuthorityInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
                              Object object) throws Exception {
+
+        if (request.getMethod().equals("OPTIONS")) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return true;
+        }
+
         String uri = request.getRequestURI();
         if (NOT_INTERCEPT_URI.contains(uri)) {
             log.info("不拦截" + uri);
@@ -41,10 +49,13 @@ public class AuthorityInterceptor implements HandlerInterceptor {
         log.info("拦截" + uri);
 
         String token = request.getHeader("authorization");
-        HttpSession localSession = MySessionContext.getSession(request.getSession().getId());
-        if(!localSession.getAttribute("token").equals(token)){
-            throw new RuntimeException("用户未登陆");
-        }
+//        String userAgent = request.getHeader("User-Agent");
+//        String token1 = request.getHeader("token");
+        // 让浏览器能访问到其它响应头
+//        HttpSession localSession = MySessionContext.getSession(request.getSession().getId());
+//        if(!localSession.getAttribute("token").equals(token)){
+//            throw new RuntimeException("用户未登陆");
+//        }
         Claims claims = TokenUtils.parseJWT(token);
         if (claims.get("system",String.class)==null){
             throw new RuntimeException("用户未登陆");

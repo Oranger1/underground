@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -30,7 +31,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequsetVo loginRequsetVo, HttpServletRequest request){
+    public String login(@RequestBody LoginRequsetVo loginRequsetVo, HttpServletRequest request, HttpServletResponse response){
         Manager manager = managerService.lambdaQuery()
                 .eq(Manager::getUsername, loginRequsetVo.getUsername())
                 .eq(Manager::getPassword, loginRequsetVo.getPassword()).one();
@@ -41,15 +42,16 @@ public class LoginController {
                 token = TokenUtils.createJWT("oranger",manager.getUsername(), json);
 
                 //将token信息存放于session中。
-                HttpSession session = request.getSession();
-                session.setAttribute("token",token);
-                MySessionContext.addSession(session);
+//                HttpSession session = request.getSession();
+//                session.setAttribute("token",token);
+//                MySessionContext.addSession(session);
 
                 Claims claims = TokenUtils.parseJWT(token);
                 claims.getId();
                 Manager manager1 = JSONUtils.parse(claims.getSubject(), Manager.class);
                 System.out.println(manager1.getUsername());
                 System.out.println(claims.get("username", String.class));
+                response.setHeader("authorization",token);
 
             } catch (Exception e) {
                 System.err.println("登陆失败");

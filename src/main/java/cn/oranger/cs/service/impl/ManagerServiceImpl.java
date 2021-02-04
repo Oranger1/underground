@@ -1,4 +1,7 @@
 package cn.oranger.cs.service.impl;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+import cn.oranger.cs.utils.StreamUtils;
 import com.google.common.collect.Lists;
 
 import cn.oranger.cs.entity.Manager;
@@ -14,8 +17,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,7 +49,8 @@ public class ManagerServiceImpl extends ServiceImpl<ManagerMapper, Manager> impl
         Manager manager = Beans.copy(queryVo, Manager.class);
         queryWrapper.setEntity(manager);
 
-        return managerMapper.selectPage(page,queryWrapper);
+        IPage<Manager> managerIPage = managerMapper.selectPage(page, queryWrapper);
+        return managerIPage;
     }
 
     @Override
@@ -61,12 +68,13 @@ public class ManagerServiceImpl extends ServiceImpl<ManagerMapper, Manager> impl
 
     @Override
     public boolean addManager(Manager manager) {
+        manager.setCreationTime(new Date());
         return this.saveOrUpdate(manager);
     }
 
     @Override
     public boolean updateManager(Manager manager) {
-        return this.saveOrUpdate(manager);
+        return this.updateById(manager);
     }
 
     @Override
