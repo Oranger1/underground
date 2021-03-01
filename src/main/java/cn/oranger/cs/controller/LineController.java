@@ -10,11 +10,7 @@ import cn.oranger.cs.service.StationService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -43,7 +39,7 @@ public class LineController {
     }
 
     @PostMapping("/add")
-    public boolean addLine(Line line){
+    public boolean addLine(@RequestBody Line line){
         return lineService.addLine(line);
     }
 

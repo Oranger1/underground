@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -56,6 +57,7 @@ public class LineServiceImpl extends ServiceImpl<LineMapper, Line> implements Li
 
     @Override
     public boolean addLine(Line line) {
+        line.setCreationTime(new Date());
         return this.saveOrUpdate(line);
     }
 
