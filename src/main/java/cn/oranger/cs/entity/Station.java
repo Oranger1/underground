@@ -35,6 +35,8 @@ public class Station implements Serializable {
 
     private String name;
 
+    private String label;
+
     private Integer lineId;
 
     /**

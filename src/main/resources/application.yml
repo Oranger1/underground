@@ -6,7 +6,7 @@ spring:
   application:
     name: underground
   datasource:
-    url: jdbc:mysql://localhost:3306/underground?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8
+    url: jdbc:mysql://47.107.84.139:3306/underground?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
