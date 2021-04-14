@@ -27,7 +27,7 @@ public class AddStationRequest {
 
     private Integer y;
 
-    private String labelPost;
+    private String labelPos;
 
     private String marker;
 

@@ -2,14 +2,11 @@ package cn.oranger.cs.controller;
 
 
 import cn.oranger.cs.entity.Line;
-import cn.oranger.cs.entity.Station;
 import cn.oranger.cs.requestVo.LineQueryVo;
-import cn.oranger.cs.requestVo.StationQueryVo;
 import cn.oranger.cs.service.LineService;
-import cn.oranger.cs.service.StationService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,13 +26,14 @@ public class LineController {
     private LineService lineService;
 
     @GetMapping("/page")
-    public IPage<Line> pageLine(LineQueryVo queryVo){
+    public IPage<Line> pageLine(){
+        LineQueryVo queryVo = new LineQueryVo();
         return lineService.pageLines(queryVo);
     }
 
     @GetMapping("/query")
-    public List<Line> queryLine(LineQueryVo queryVo){
-        return lineService.queryLines(queryVo);
+    public List<Line> queryLine(){
+        return lineService.list();
     }
 
     @PostMapping("/add")
@@ -43,7 +41,7 @@ public class LineController {
         return lineService.addLine(line);
     }
 
-    @PostMapping("/update")
+    @PutMapping("/update")
     public boolean updateLine(Line line){
         return lineService.updateLine(line);
     }

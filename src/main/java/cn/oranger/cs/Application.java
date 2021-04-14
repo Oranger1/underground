@@ -1,5 +1,7 @@
 package cn.oranger.cs;
 
+import cn.oranger.cs.broker.InitialMatrix;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -9,6 +11,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 public class Application {
+    @Autowired
+    private InitialMatrix initialMatrix;
 
     public static void main(String[] args) {
 

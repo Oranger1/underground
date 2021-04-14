@@ -63,7 +63,7 @@ public class ManagerServiceImpl extends ServiceImpl<ManagerMapper, Manager> impl
 
     @Override
     public Manager getManager(Integer managerId) {
-        return null;
+        return managerMapper.selectById(managerId);
     }
 
     @Override

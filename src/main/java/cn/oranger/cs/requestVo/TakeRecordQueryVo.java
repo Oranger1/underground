@@ -14,12 +14,19 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class StationQueryVo extends BasePage {
-    private String name;
+public class TakeRecordQueryVo extends BasePage {
+    private Byte status;
 
-    private Integer lineId;
+    /***
+     * 维度
+     */
+    private String dimension;
 
-    private Boolean isOnlyStation;
+    private Date creationTime;
+
+    private Date getOnTime;
+
+    private Date getOffTime;
 
 
 }

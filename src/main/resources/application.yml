@@ -10,6 +10,14 @@ spring:
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
+#  rabbitmq:
+#    host:
+#    port:
+#    username:
+#    password:
+#    virtual-host:
+#    addresses:
+#    connection-timeout:
 
 mybatis-plus:
   configuration:

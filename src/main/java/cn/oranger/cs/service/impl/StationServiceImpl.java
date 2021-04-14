@@ -56,9 +56,11 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station> impl
             page = new Page<Station>();
         }
         Station station = Beans.copy(queryVo, Station.class);
-        queryWrapper.setEntity(station);
+        queryWrapper.setEntity(station).orderByAsc("sequence");
 
-
+        if (queryVo.getIsOnlyStation() == true){
+            queryWrapper.eq("status",1);
+        }
         return this.page(page,queryWrapper);
     }
 
@@ -66,7 +68,10 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station> impl
     public List<Station> queryStations(StationQueryVo queryVo) {
         QueryWrapper<Station> queryWrapper = new QueryWrapper<Station>();
         Station station = Beans.copy(queryVo, Station.class);
-        queryWrapper.setEntity(station);
+        queryWrapper.setEntity(station).orderByAsc("station_number");
+        if (queryVo.getIsOnlyStation()){
+            queryWrapper.eq("status",1);
+        }
         return this.list(queryWrapper);
     }
 
@@ -76,47 +81,40 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station> impl
     }
 
     @Override
+    public List<Station> queryOnlyStation() {
+        QueryWrapper<Station> queryWrapper = new QueryWrapper<Station>();
+        queryWrapper.ne("name","").orderByAsc("station_number");
+        return this.list(queryWrapper);
+    }
+
+    @Override
     @Transactional("")
     public boolean addStation(AddStationRequest request) {
-        if (request.getIsStation()==true){
-            Station station = BeanUtil.copyProperties(request,Station.class);
-            station.setCreationTime(new Date());
-            //修改影响的站的信息
+//        LineNode lineNode = new LineNode();
+        Station station = BeanUtil.copyProperties(request,Station.class);
+        station.setLabel(request.getName());
+        station.setCreationTime(new Date());
+        station.setMarker("interchange");
+        //修改影响的站的信息
 
-            //增加站
-            this.save(station);
-
-            //修改线路总站数信息
-        }
-        //仅增加LineNode表的一条数据
-        LineNode lineNode = new LineNode();
-        lineNode.setX(request.getX());
-        lineNode.setY(request.getY());
-        lineNode.setSequence(request.getSequence());
-        lineNode.setLineId(request.getLineId());
-
-        if (!StringUtils.isEmpty(request.getName())){
-            lineNode.setName(request.getName());
-        }
-        if (!StringUtils.isEmpty(request.getLabelPost())){
-            lineNode.setLabelPos(request.getLabelPost());
-        }
-        if (!StringUtils.isEmpty(request.getMarker())){
-            lineNode.setMarker(request.getMarker());
-        }
-        if (!StringUtils.isEmpty(request.getCanonical())){
-            lineNode.setCanonical(request.getCanonical());
+        //增加站
+        this.save(station);
+        if (request.getIsStation()){
+            station.setStatus(1);
+        }else {
+            station.setStatus(2);
         }
 
-
-
+        LineNode lineNode = BeanUtil.copyProperties(station, LineNode.class);
         lineNodeService.save(lineNode);
 
+        //修改线路总站数信息
         return true;
     }
 
     @Override
     public boolean updateStation(Station station) {
+        station.setLabel(station.getName());
         return this.saveOrUpdate(station);
     }
 
@@ -126,10 +124,13 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station> impl
     }
 
     @Override
-    public List<Station> queryStationsByLineId(Integer lineId) {
+    public List<Station> queryStationsByLineId(Integer lineId,Boolean isStation) {
         QueryWrapper<Station> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("line_id",lineId)
-                .orderByAsc("station_number");
+        if (isStation == true){
+            queryWrapper.ge("name","");
+        }
+            queryWrapper.eq("line_id",lineId)
+                .orderByAsc("sequence");
         return this.list(queryWrapper);
     }
 }

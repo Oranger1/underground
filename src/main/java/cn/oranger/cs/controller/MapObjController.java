@@ -3,21 +3,21 @@ package cn.oranger.cs.controller;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
+import cn.oranger.cs.broker.InitialMatrix;
 import cn.oranger.cs.entity.Line;
 import cn.oranger.cs.entity.Station;
 import cn.oranger.cs.requestVo.LineQueryVo;
 import cn.oranger.cs.requestVo.map.MapLineVo;
+import cn.oranger.cs.requestVo.map.MapNodeVo;
 import cn.oranger.cs.requestVo.map.MapStationVo;
 import cn.oranger.cs.responseVo.MapJsonObjVo;
 import cn.oranger.cs.service.LineNodeService;
 import cn.oranger.cs.service.LineService;
+import cn.oranger.cs.service.MatrixService;
 import cn.oranger.cs.service.StationService;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +36,10 @@ public class MapObjController {
     private LineService lineService;
     @Autowired
     private LineNodeService lIneNodeService;
+    @Autowired
+    private InitialMatrix initialMatrix;
+    @Autowired
+    private MatrixService matrixService;
 
 
     @PostMapping("/parseMap")
@@ -56,7 +60,6 @@ public class MapObjController {
         List<MapStationVo> mapStationVoList = new ArrayList<>();
         stations.forEach(v->{
             MapStationVo mapStationVo = BeanUtil.copyProperties(v, MapStationVo.class);
-            System.out.println(mapStationVo.getName());
             mapStationVoList.add(mapStationVo);
         });
         HashMap<String, MapStationVo> mapStations = new HashMap<>();
@@ -75,10 +78,39 @@ public class MapObjController {
             mapLineVo.setLabel(line.getLabel());
             List<Integer> shiftCoords = Lists.newArrayList(0,0);
             mapLineVo.setShiftCoords(shiftCoords);
-            mapLineVo.setNodes(lIneNodeService.queryLineNodesById(line.getId()));
+            mapLineVo.setNodes(queryLineNode(line.getId()));
             lineVoList.add(mapLineVo);
         }
         mapJsonObjVo.setLines(lineVoList);
         return mapJsonObjVo;
     }
+
+    public List<MapNodeVo> queryLineNode(Integer lineId){
+        List<Station> stations = stationService.queryStationsByLineId(lineId,false);
+        return parseToMapNode(stations);
+    }
+
+    public List<MapNodeVo> parseToMapNode(List<Station> list){
+        List<MapNodeVo> mapNodeVoList = new ArrayList<>();
+        for (Station station : list) {
+            List<Integer> coords = Lists.newArrayList(station.getX(),station.getY());
+            MapNodeVo mapNodeVo = new MapNodeVo();
+            mapNodeVo.setCoords(coords);
+            mapNodeVo.setLabelPos(station.getLabelPos());
+            mapNodeVo.setMarker(station.getMarker());
+            mapNodeVo.setName(station.getName());
+            mapNodeVoList.add(mapNodeVo);
+        }
+        return mapNodeVoList;
+    }
+
+
+    @GetMapping("/matrix")
+    public Integer[][] Matrix(){
+        Integer[][] matrix = initialMatrix.getMatrix();
+        return matrix;
+    }
+
+
+
 }

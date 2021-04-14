@@ -8,8 +8,11 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -30,15 +33,21 @@ public class TakeRecord implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @TableId(type = IdType.AUTO)
     private Integer id;
+
+    private Long takeRecordNumber;
 
     private String startStation;
 
     private String endStation;
 
-    private Integer managerId;
+    private Long orderNumber;
 
-    private Integer billId;
+    /**
+     *0-未乘车/1-乘车中/已乘车
+     */
+    private Integer status;
 
     @TableLogic
     private Integer deleted;
@@ -49,7 +58,11 @@ public class TakeRecord implements Serializable {
     @TableField(fill = FieldFill.INSERT)
     private Date creationTime;
 
-    private Date updationTime;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private Date getOnTime;
+
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private Date getOffTime;
 
 
 }

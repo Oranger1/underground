@@ -25,12 +25,14 @@ public interface StationService extends IService<Station> {
 
     public Station getStation(Integer stationId);
 
+    public List<Station> queryOnlyStation();
+
     public boolean addStation(AddStationRequest request);
 
     public boolean updateStation(Station station);
 
     public Integer removeById(Integer stationId);
 
-    public List<Station> queryStationsByLineId(Integer lineId);
+    public List<Station> queryStationsByLineId(Integer lineId,Boolean isOnlyStation);
 
 }

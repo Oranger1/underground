@@ -2,6 +2,7 @@ package cn.oranger.cs.controller;
 
 import cn.oranger.cs.entity.Manager;
 import cn.oranger.cs.requestVo.LoginRequsetVo;
+import cn.oranger.cs.responseVo.LoginResponseVo;
 import cn.oranger.cs.security.MySessionContext;
 import cn.oranger.cs.security.TokenUtils;
 import cn.oranger.cs.service.ManagerService;
@@ -31,13 +32,15 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequsetVo loginRequsetVo, HttpServletRequest request, HttpServletResponse response){
+    public LoginResponseVo login(@RequestBody LoginRequsetVo loginRequsetVo, HttpServletResponse response){
         Manager manager = managerService.lambdaQuery()
                 .eq(Manager::getUsername, loginRequsetVo.getUsername())
                 .eq(Manager::getPassword, loginRequsetVo.getPassword()).one();
         String token = null;
+        Integer code = 404;
         if (manager!=null){
             try {
+                code = 200;
                 String json = JSONUtils.toJSONString(manager);
                 token = TokenUtils.createJWT("oranger",manager.getUsername(), json);
 
@@ -45,12 +48,6 @@ public class LoginController {
 //                HttpSession session = request.getSession();
 //                session.setAttribute("token",token);
 //                MySessionContext.addSession(session);
-
-                Claims claims = TokenUtils.parseJWT(token);
-                claims.getId();
-                Manager manager1 = JSONUtils.parse(claims.getSubject(), Manager.class);
-                System.out.println(manager1.getUsername());
-                System.out.println(claims.get("username", String.class));
                 response.setHeader("authorization",token);
 
             } catch (Exception e) {
@@ -58,6 +55,29 @@ public class LoginController {
                 e.printStackTrace();
             }
         }
-        return token;
+        LoginResponseVo loginResponseVo = new LoginResponseVo();
+        loginResponseVo.setCode(code);
+        loginResponseVo.setToken(token);
+        return loginResponseVo;
+    }
+
+    @GetMapping("/touristLogin")
+    public LoginResponseVo touristLogin(){
+        String token = null;
+        Integer code = 404;
+        try {
+            Manager manager = managerService.getManager(0);
+            code = 200;
+            String json = JSONUtils.toJSONString(manager);
+            token = TokenUtils.createJWT("oranger", manager.getUsername(), json);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        LoginResponseVo loginResponseVo = new LoginResponseVo();
+        loginResponseVo.setCode(code);
+        loginResponseVo.setToken(token);
+        return loginResponseVo;
     }
 }

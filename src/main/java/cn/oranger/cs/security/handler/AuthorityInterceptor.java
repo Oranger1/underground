@@ -27,6 +27,10 @@ public class AuthorityInterceptor implements HandlerInterceptor {
     static {
         NOT_INTERCEPT_URI.add("/login.html");
         NOT_INTERCEPT_URI.add("/login");
+        NOT_INTERCEPT_URI.add("/apily");
+        NOT_INTERCEPT_URI.add("/touristLogin");
+
+
     }
 
     /**
